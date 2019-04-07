@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "249573528963",
+    "firebase_url": "https://sns-project-30f3c.firebaseio.com",
+    "project_id": "sns-project-30f3c",
+    "storage_bucket": "sns-project-30f3c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:249573528963:android:26037cab724b9f91",
+        "android_client_info": {
+          "package_name": "com.example.sns_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTTscdOSNTRNqIOO284f9Vpw6dV-Iy6JE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "249573528963-lem3f694l2095tl66ggckavg2j88ah1b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
