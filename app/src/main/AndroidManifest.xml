@@ -31,6 +31,10 @@
         </activity>
         <activity android:name=".SignUpActivity">
         </activity>
+        <activity android:name=".PasswordResetActivity">
+        </activity>
+        <activity android:name=".MemberInitActivity">
+        </activity>
     </application>
 
 </manifest>
