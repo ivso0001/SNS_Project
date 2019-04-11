@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         if(user == null){
             myStartActivity(SignUpActivity.class);
         }else{
-            myStartActivity(CameraActivity.class);
+            myStartActivity(MemberInitActivity.class);
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             DocumentReference docRef = db.collection("users").document(user.getUid());
