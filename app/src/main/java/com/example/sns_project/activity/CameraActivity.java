@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.sns_project;
+package com.example.sns_project.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -23,6 +23,9 @@ import android.media.ImageReader;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import com.example.sns_project.R;
+import com.example.sns_project.fragment.Camera2BasicFragment;
 
 import java.io.File;
 import java.io.FileOutputStream;
