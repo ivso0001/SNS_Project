@@ -36,6 +36,7 @@
                     android:id="@+id/profileImageView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
                     android:src="@android:drawable/sym_def_app_icon" />
             </android.support.v7.widget.CardView>
 
