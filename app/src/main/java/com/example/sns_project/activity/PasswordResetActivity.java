@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.sns_project.R;
@@ -32,7 +33,7 @@ public class PasswordResetActivity extends BasicActivity {
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            switch (v.getId()){
+            switch (v.getId()) {
                 case R.id.sendButton:
                     send();
                     break;
@@ -41,19 +42,21 @@ public class PasswordResetActivity extends BasicActivity {
     };
 
     private void send() {
-        String email = ((EditText)findViewById(R.id.emailEditText)).getText().toString();
-
-        if(email.length() > 0){
+        String email = ((EditText) findViewById(R.id.emailEditText)).getText().toString();
+        if (email.length() > 0) {
+            final RelativeLayout loaderLayout = findViewById(R.id.loaderLyaout);
+            loaderLayout.setVisibility(View.VISIBLE);
             mAuth.sendPasswordResetEmail(email)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
+                            loaderLayout.setVisibility(View.GONE);
                             if (task.isSuccessful()) {
                                 startToast("이메일을 보냈습니다.");
                             }
                         }
                     });
-        }else {
+        } else {
             startToast("이메일을 입력해 주세요.");
         }
     }

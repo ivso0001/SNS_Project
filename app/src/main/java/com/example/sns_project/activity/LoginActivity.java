@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.sns_project.R;
@@ -32,7 +33,7 @@ public class LoginActivity extends BasicActivity {
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            switch (v.getId()){
+            switch (v.getId()) {
                 case R.id.loginButton:
                     login();
                     break;
@@ -44,26 +45,29 @@ public class LoginActivity extends BasicActivity {
     };
 
     private void login() {
-        String email = ((EditText)findViewById(R.id.emailEditText)).getText().toString();
-        String password = ((EditText)findViewById(R.id.passwordEditText)).getText().toString();
+        String email = ((EditText) findViewById(R.id.emailEditText)).getText().toString();
+        String password = ((EditText) findViewById(R.id.passwordEditText)).getText().toString();
 
-        if(email.length() > 0 && password.length() > 0){
+        if (email.length() > 0 && password.length() > 0) {
+            final RelativeLayout loaderLayout = findViewById(R.id.loaderLyaout);
+            loaderLayout.setVisibility(View.VISIBLE);
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
+                            loaderLayout.setVisibility(View.GONE);
                             if (task.isSuccessful()) {
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 startToast("로그인에 성공하였습니다.");
                                 myStartActivity(MainActivity.class);
                             } else {
-                                if(task.getException() != null){
+                                if (task.getException() != null) {
                                     startToast(task.getException().toString());
                                 }
                             }
                         }
                     });
-        }else {
+        } else {
             startToast("이메일 또는 비밀번호를 입력해 주세요.");
         }
     }
