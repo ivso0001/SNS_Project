@@ -1,9 +1,10 @@
 package com.example.sns_project;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class PostInfo {
+public class PostInfo implements Serializable {
     private String title;
     private ArrayList<String> contents;
     private String publisher;
@@ -23,7 +24,6 @@ public class PostInfo {
         this.contents = contents;
         this.publisher = publisher;
         this.createdAt = createdAt;
-        this.id = id;
     }
 
     public String getTitle(){

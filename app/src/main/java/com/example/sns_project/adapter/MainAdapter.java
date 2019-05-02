@@ -2,6 +2,7 @@ package com.example.sns_project.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
@@ -33,7 +34,6 @@ import java.util.Locale;
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder> {
     private ArrayList<PostInfo> mDataset;
     private Activity activity;
-    private FirebaseFirestore firebaseFirestore;
     private OnPostListener onPostListener;
 
     static class MainViewHolder extends RecyclerView.ViewHolder {
@@ -45,9 +45,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     }
 
     public MainAdapter(Activity activity, ArrayList<PostInfo> myDataset) {
-        mDataset = myDataset;
+        this.mDataset = myDataset;
         this.activity = activity;
-        firebaseFirestore = FirebaseFirestore.getInstance();
     }
 
     public void setOnPostListener(OnPostListener onPostListener){
@@ -94,25 +93,32 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         ArrayList<String> contentsList = mDataset.get(position).getContents();
 
-        if(contetnsLayout.getTag() == null || !contetnsLayout.getTag().equals(contentsList)){
+        if (contetnsLayout.getTag() == null || !contetnsLayout.getTag().equals(contentsList)) {
             contetnsLayout.setTag(contentsList);
             contetnsLayout.removeAllViews();
-            if(contentsList.size() > 0){
-                for (int i = 0; i < contentsList.size(); i++ ){
-                    String contents = contentsList.get(i);
-                    if(Patterns.WEB_URL.matcher(contents).matches()){
-                        ImageView imageView = new ImageView(activity);
-                        imageView.setLayoutParams(layoutParams);
-                        imageView.setAdjustViewBounds(true);
-                        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                        contetnsLayout.addView(imageView);
-                        Glide.with(activity).load(contents).override(1000).thumbnail(0.1f).into(imageView);
-                    }else {
-                        TextView textView = new TextView(activity);
-                        textView.setLayoutParams(layoutParams);
-                        textView.setText(contents);
-                        contetnsLayout.addView(textView);
-                    }
+            final int MORE_INDEX = 2;
+            for (int i = 0; i < contentsList.size(); i++) {
+                if (i == MORE_INDEX) {
+                    TextView textView = new TextView(activity);
+                    textView.setLayoutParams(layoutParams);
+                    textView.setText("더보기...");
+                    contetnsLayout.addView(textView);
+                    break;
+                }
+                String contents = contentsList.get(i);
+                if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-30f3c.appspot.com/o/post")) {
+                    ImageView imageView = new ImageView(activity);
+                    imageView.setLayoutParams(layoutParams);
+                    imageView.setAdjustViewBounds(true);
+                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                    contetnsLayout.addView(imageView);
+                    Glide.with(activity).load(contents).override(1000).thumbnail(0.1f).into(imageView);
+                } else {
+                    TextView textView = new TextView(activity);
+                    textView.setLayoutParams(layoutParams);
+                    textView.setText(contents);
+                    textView.setTextColor(Color.rgb(0, 0, 0));
+                    contetnsLayout.addView(textView);
                 }
             }
         }
@@ -128,13 +134,12 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                String id = mDataset.get(position).getId();
                 switch (menuItem.getItemId()) {
                     case R.id.modify:
-                        onPostListener.onModify(id);
+                        onPostListener.onModify(position);
                         return true;
                     case R.id.delete:
-                        onPostListener.onDelete(id);
+                        onPostListener.onDelete(position);
                         return true;
                     default:
                         return false;
