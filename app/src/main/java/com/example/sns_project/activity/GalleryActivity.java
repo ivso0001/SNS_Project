@@ -11,16 +11,15 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.Toast;
 
 import com.example.sns_project.R;
 import com.example.sns_project.adapter.GalleryAdapter;
 
 import java.util.ArrayList;
+
+import static com.example.sns_project.Util.showToast;
 
 public class GalleryActivity extends BasicActivity {
 
@@ -39,7 +38,7 @@ public class GalleryActivity extends BasicActivity {
                     Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
             } else {
-                startToast("권한을 허용해 주세요");
+                showToast(GalleryActivity.this, "권한을 허용해 주세요.");
             }
         } else {
             recyclerInit();
@@ -54,7 +53,7 @@ public class GalleryActivity extends BasicActivity {
                     recyclerInit();
                 } else {
                     finish();
-                    startToast("권한을 허용해 주세요");
+                    showToast(GalleryActivity.this, "권한을 허용해 주세요.");
                 }
             }
         }
@@ -97,9 +96,5 @@ public class GalleryActivity extends BasicActivity {
             listOfAllImages.add(PathOfImage);
         }
         return listOfAllImages;
-    }
-
-    private void startToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }

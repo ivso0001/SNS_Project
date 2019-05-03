@@ -6,12 +6,10 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
 
 import com.example.sns_project.PostInfo;
 import com.example.sns_project.R;
-import com.example.sns_project.Util;
 import com.example.sns_project.adapter.MainAdapter;
 import com.example.sns_project.listener.OnPostListener;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,6 +31,10 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static com.example.sns_project.Util.isStorageUrl;
+import static com.example.sns_project.Util.showToast;
+import static com.example.sns_project.Util.storageUrlToName;
+
 public class MainActivity extends BasicActivity {
     private static final String TAG = "MainActivity";
     private FirebaseUser firebaseUser;
@@ -40,7 +42,6 @@ public class MainActivity extends BasicActivity {
     private StorageReference storageRef;
     private MainAdapter mainAdapter;
     private ArrayList<PostInfo> postList;
-    private Util util;
     private int successCount;
 
     @Override
@@ -77,7 +78,6 @@ public class MainActivity extends BasicActivity {
             });
         }
 
-        util = new Util(this);
         postList = new ArrayList<>();
         mainAdapter = new MainAdapter(MainActivity.this, postList);
         mainAdapter.setOnPostListener(onPostListener);
@@ -91,7 +91,7 @@ public class MainActivity extends BasicActivity {
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         postsUpdate();
     }
@@ -103,12 +103,9 @@ public class MainActivity extends BasicActivity {
             ArrayList<String> contentsList = postList.get(position).getContents();
             for (int i = 0; i < contentsList.size(); i++) {
                 String contents = contentsList.get(i);
-                if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/sns-project-30f3c.appspot.com/o/post")) {
+                if (isStorageUrl(contents)) {
                     successCount++;
-                    String[] list = contents.split("\\?");
-                    String[] list2 = list[0].split("%2F");
-                    String name = list2[list2.length - 1];
-                    StorageReference desertRef = storageRef.child("posts/"+id+"/"+name);
+                    StorageReference desertRef = storageRef.child("posts/" + id + "/" + storageUrlToName(contents));
                     desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -118,7 +115,7 @@ public class MainActivity extends BasicActivity {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
-                            util.showToast("ERROR");
+                            showToast(MainActivity.this, "Error");
                         }
                     });
                 }
@@ -149,7 +146,7 @@ public class MainActivity extends BasicActivity {
         }
     };
 
-    private void postsUpdate(){
+    private void postsUpdate() {
         if (firebaseUser != null) {
             CollectionReference collectionReference = firebaseFirestore.collection("posts");
             collectionReference.orderBy("createdAt", Query.Direction.DESCENDING).get()
@@ -176,21 +173,21 @@ public class MainActivity extends BasicActivity {
         }
     }
 
-    private void storeUploader(String id){
-        if(successCount == 0) {
+    private void storeUploader(String id) {
+        if (successCount == 0) {
             firebaseFirestore.collection("posts").document(id)
                     .delete()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            util.showToast("게시글을 삭제하였습니다.");
+                            showToast(MainActivity.this, "게시글을 삭제하였습니다.");
                             postsUpdate();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            util.showToast("게시글을 삭제하지 못하였습니다.");
+                            showToast(MainActivity.this, "게시글을 삭제하지 못하였습니다.");
                         }
                     });
         }

@@ -1,29 +1,20 @@
 package com.example.sns_project.activity;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.sns_project.MemberInfo;
 import com.example.sns_project.R;
-import com.example.sns_project.activity.CameraActivity;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -40,6 +31,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+
+import static com.example.sns_project.Util.showToast;
 
 public class MemberInitActivity extends BasicActivity {
     private static final String TAG = "MemberInitActivity";
@@ -144,7 +137,7 @@ public class MemberInitActivity extends BasicActivity {
                                 MemberInfo memberInfo = new MemberInfo(name, phoneNumber, birthDay, address, downloadUri.toString());
                                 storeUploader(memberInfo);
                             } else {
-                                startToast("회원정보를 보내는데 실패하였습니다.");
+                                showToast(MemberInitActivity.this, "회원정보를 보내는데 실패하였습니다.");
                             }
                         }
                     });
@@ -153,7 +146,7 @@ public class MemberInitActivity extends BasicActivity {
                 }
             }
         } else {
-            startToast("회원정보를 입력해주세요.");
+            showToast(MemberInitActivity.this, "회원정보를 입력해주세요.");
         }
     }
 
@@ -163,7 +156,7 @@ public class MemberInitActivity extends BasicActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        startToast("회원정보 등록을 성공하였습니다.");
+                        showToast(MemberInitActivity.this, "회원정보 등록을 성공하였습니다.");
                         loaderLayout.setVisibility(View.GONE);
                         finish();
                     }
@@ -171,15 +164,11 @@ public class MemberInitActivity extends BasicActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        startToast("회원정보 등록에 실패하였습니다.");
+                        showToast(MemberInitActivity.this, "회원정보 등록에 실패하였습니다.");
                         loaderLayout.setVisibility(View.GONE);
                         Log.w(TAG, "Error writing document", e);
                     }
                 });
-    }
-
-    private void startToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     private void myStartActivity(Class c) {
