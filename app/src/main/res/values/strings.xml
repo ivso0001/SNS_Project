@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">SNS_Project</string>
+    <string name="app_name">SNS Project</string>
     <string name="request_permission">This sample needs camera permission.</string>
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
+
+    <string name="please_grant_permission">권한을 허용해 주세요.</string>
 </resources>

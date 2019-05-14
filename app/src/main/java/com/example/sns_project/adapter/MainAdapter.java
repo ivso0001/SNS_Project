@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,10 +18,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.sns_project.FirebaseHelper;
 import com.example.sns_project.PostInfo;
 import com.example.sns_project.R;
 import com.example.sns_project.activity.PostActivity;
+import com.example.sns_project.activity.WritePostActivity;
 import com.example.sns_project.listener.OnPostListener;
+import com.example.sns_project.view.ReadContentsVIew;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,7 +35,8 @@ import static com.example.sns_project.Util.isStorageUrl;
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder> {
     private ArrayList<PostInfo> mDataset;
     private Activity activity;
-    private OnPostListener onPostListener;
+    private FirebaseHelper firebaseHelper;
+    private final int MORE_INDEX = 2;
 
     static class MainViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
@@ -44,10 +49,12 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     public MainAdapter(Activity activity, ArrayList<PostInfo> myDataset) {
         this.mDataset = myDataset;
         this.activity = activity;
+
+        firebaseHelper = new FirebaseHelper(activity);
     }
 
     public void setOnPostListener(OnPostListener onPostListener){
-        this.onPostListener = onPostListener;
+        firebaseHelper.setOnPostListener(onPostListener);
     }
 
     @Override
@@ -83,43 +90,19 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     public void onBindViewHolder(@NonNull final MainViewHolder holder, int position) {
         CardView cardView = holder.cardView;
         TextView titleTextView = cardView.findViewById(R.id.titleTextView);
-        titleTextView.setText(mDataset.get(position).getTitle());
 
-        TextView createdAtTextView = cardView.findViewById(R.id.createAtTextView);
-        createdAtTextView.setText(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(mDataset.get(position).getCreatedAt()));
+        PostInfo postInfo = mDataset.get(position);
+        titleTextView.setText(postInfo.getTitle());
 
+        ReadContentsVIew readContentsVIew = cardView.findViewById(R.id.readContentsView);
         LinearLayout contentsLayout = cardView.findViewById(R.id.contentsLayout);
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        ArrayList<String> contentsList = mDataset.get(position).getContents();
 
-        if (contentsLayout.getTag() == null || !contentsLayout.getTag().equals(contentsList)) {
-            contentsLayout.setTag(contentsList);
+        if (contentsLayout.getTag() == null || !contentsLayout.getTag().equals(postInfo)) {
+            contentsLayout.setTag(postInfo);
             contentsLayout.removeAllViews();
-            final int MORE_INDEX = 2;
-            for (int i = 0; i < contentsList.size(); i++) {
-                if (i == MORE_INDEX) {
-                    TextView textView = new TextView(activity);
-                    textView.setLayoutParams(layoutParams);
-                    textView.setText("더보기...");
-                    contentsLayout.addView(textView);
-                    break;
-                }
-                String contents = contentsList.get(i);
-                if (isStorageUrl(contents)) {
-                    ImageView imageView = new ImageView(activity);
-                    imageView.setLayoutParams(layoutParams);
-                    imageView.setAdjustViewBounds(true);
-                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                    contentsLayout.addView(imageView);
-                    Glide.with(activity).load(contents).override(1000).thumbnail(0.1f).into(imageView);
-                } else {
-                    TextView textView = new TextView(activity);
-                    textView.setLayoutParams(layoutParams);
-                    textView.setText(contents);
-                    textView.setTextColor(Color.rgb(0, 0, 0));
-                    contentsLayout.addView(textView);
-                }
-            }
+
+            readContentsVIew.setMoreIndex(MORE_INDEX);
+            readContentsVIew.setPostInfo(postInfo);
         }
     }
 
@@ -135,10 +118,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.modify:
-                        onPostListener.onModify(position);
+                        myStartActivity(WritePostActivity.class, mDataset.get(position));
                         return true;
                     case R.id.delete:
-                        onPostListener.onDelete(position);
+                        firebaseHelper.storageDelete(mDataset.get(position));
                         return true;
                     default:
                         return false;
@@ -149,5 +132,11 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.post, popup.getMenu());
         popup.show();
+    }
+
+    private void myStartActivity(Class c, PostInfo postInfo) {
+        Intent intent = new Intent(activity, c);
+        intent.putExtra("postInfo", postInfo);
+        activity.startActivity(intent);
     }
 }
