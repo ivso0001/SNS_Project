@@ -1,7 +1,7 @@
 package com.example.sns_project.activity;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;

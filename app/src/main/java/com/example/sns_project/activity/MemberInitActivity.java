@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -39,6 +39,7 @@ public class MemberInitActivity extends BasicActivity {
     private static final String TAG = "MemberInitActivity";
     private ImageView profileImageVIew;
     private RelativeLayout loaderLayout;
+    private RelativeLayout buttonBackgroundLayout;
     private String profilePath;
     private FirebaseUser user;
 
@@ -50,6 +51,9 @@ public class MemberInitActivity extends BasicActivity {
 
         loaderLayout = findViewById(R.id.loaderLyaout);
         profileImageVIew = findViewById(R.id.profileImageView);
+        buttonBackgroundLayout = findViewById(R.id.buttonsBackgroundLayout);
+
+        buttonBackgroundLayout.setOnClickListener(onClickListener);
         profileImageVIew.setOnClickListener(onClickListener);
 
         findViewById(R.id.checkButton).setOnClickListener(onClickListener);
@@ -71,6 +75,7 @@ public class MemberInitActivity extends BasicActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     profilePath = data.getStringExtra(INTENT_PATH);
                     Glide.with(this).load(profilePath).centerCrop().override(500).into(profileImageVIew);
+                    buttonBackgroundLayout.setVisibility(View.GONE);
                 }
                 break;
             }
@@ -85,12 +90,10 @@ public class MemberInitActivity extends BasicActivity {
                     storageUploader();
                     break;
                 case R.id.profileImageView:
-                    CardView cardView = findViewById(R.id.buttonsCardView);
-                    if (cardView.getVisibility() == View.VISIBLE) {
-                        cardView.setVisibility(View.GONE);
-                    } else {
-                        cardView.setVisibility(View.VISIBLE);
-                    }
+                    buttonBackgroundLayout.setVisibility(View.VISIBLE);
+                    break;
+                case R.id.buttonsBackgroundLayout:
+                    buttonBackgroundLayout.setVisibility(View.GONE);
                     break;
                 case R.id.picture:
                     myStartActivity(CameraActivity.class);
