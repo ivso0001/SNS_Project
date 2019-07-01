@@ -32,7 +32,6 @@ public class PostActivity extends BasicActivity {
         setContentView(R.layout.activity_post);
 
         postInfo = (PostInfo) getIntent().getSerializableExtra("postInfo");
-
         contentsLayout = findViewById(R.id.contentsLayout);
         readContentsVIew = findViewById(R.id.readContentsView);
 
@@ -77,7 +76,7 @@ public class PostActivity extends BasicActivity {
 
     OnPostListener onPostListener = new OnPostListener() {
         @Override
-        public void onDelete() {
+        public void onDelete(PostInfo postInfo) {
             Log.e("로그 ","삭제 성공");
         }
 

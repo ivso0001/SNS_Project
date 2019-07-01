@@ -23,13 +23,16 @@ import com.example.sns_project.activity.PostActivity;
 import com.example.sns_project.activity.WritePostActivity;
 import com.example.sns_project.listener.OnPostListener;
 import com.example.sns_project.view.ReadContentsVIew;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder> {
     private ArrayList<PostInfo> mDataset;
     private Activity activity;
     private FirebaseHelper firebaseHelper;
+    private ArrayList<ArrayList<SimpleExoPlayer>> playerArrayListArrayList = new ArrayList<>();
     private final int MORE_INDEX = 2;
 
     static class MainViewHolder extends RecyclerView.ViewHolder {
@@ -97,6 +100,11 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
 
             readContentsVIew.setMoreIndex(MORE_INDEX);
             readContentsVIew.setPostInfo(postInfo);
+
+            ArrayList<SimpleExoPlayer> playerArrayList = readContentsVIew.getPlayerArrayList();
+            if(playerArrayList != null){
+                playerArrayListArrayList.add(playerArrayList);
+            }
         }
     }
 
@@ -132,5 +140,17 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         Intent intent = new Intent(activity, c);
         intent.putExtra("postInfo", postInfo);
         activity.startActivity(intent);
+    }
+
+    public void playerStop(){
+        for(int i = 0; i < playerArrayListArrayList.size(); i++){
+            ArrayList<SimpleExoPlayer> playerArrayList = playerArrayListArrayList.get(i);
+            for(int ii = 0; ii < playerArrayList.size(); ii++){
+                SimpleExoPlayer player = playerArrayList.get(ii);
+                if(player.getPlayWhenReady()){
+                    player.setPlayWhenReady(false);
+                }
+            }
+        }
     }
 }

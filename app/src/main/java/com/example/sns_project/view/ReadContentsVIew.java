@@ -32,7 +32,7 @@ import java.util.Locale;
 public class ReadContentsVIew extends LinearLayout {
     private Context context;
     private LayoutInflater layoutInflater;
-    private SimpleExoPlayer player;
+    private ArrayList<SimpleExoPlayer> playerArrayList = new ArrayList<>();
     private int moreIndex = -1;
 
     public ReadContentsVIew(Context context) {
@@ -52,7 +52,6 @@ public class ReadContentsVIew extends LinearLayout {
         setOrientation(LinearLayout.VERTICAL);
         layoutInflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         layoutInflater.inflate(R.layout.view_post, this, true);
-        player = ExoPlayerFactory.newSimpleInstance(context);
     }
 
     public void setMoreIndex(int moreIndex){
@@ -91,6 +90,9 @@ public class ReadContentsVIew extends LinearLayout {
                         Util.getUserAgent(context, getResources().getString(R.string.app_name)));
                 MediaSource videoSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
                         .createMediaSource(Uri.parse(contents));
+
+                SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(context);
+
                 player.prepare(videoSource);
 
                 player.addVideoListener(new VideoListener() {
@@ -100,6 +102,8 @@ public class ReadContentsVIew extends LinearLayout {
                     }
                 });
 
+                playerArrayList.add(player);
+
                 playerView.setPlayer(player);
                 contentsLayout.addView(playerView);
             }else{
@@ -108,5 +112,9 @@ public class ReadContentsVIew extends LinearLayout {
                 contentsLayout.addView(textView);
             }
         }
+    }
+
+    public ArrayList<SimpleExoPlayer> getPlayerArrayList() {
+        return playerArrayList;
     }
 }
