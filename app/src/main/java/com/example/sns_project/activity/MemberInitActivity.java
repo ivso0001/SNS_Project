@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
-import com.example.sns_project.MemberInfo;
+import com.example.sns_project.UserInfo;
 import com.example.sns_project.R;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -46,7 +46,7 @@ public class MemberInitActivity extends BasicActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_member_init);
+        setContentView(R.layout.activity_user_init);
         setToolbarTitle("회원정보");
 
         loaderLayout = findViewById(R.id.loaderLyaout);
@@ -119,8 +119,8 @@ public class MemberInitActivity extends BasicActivity {
             final StorageReference mountainImagesRef = storageRef.child("users/" + user.getUid() + "/profileImage.jpg");
 
             if (profilePath == null) {
-                MemberInfo memberInfo = new MemberInfo(name, phoneNumber, birthDay, address);
-                storeUploader(memberInfo);
+                UserInfo userInfo = new UserInfo(name, phoneNumber, birthDay, address);
+                storeUploader(userInfo);
             } else {
                 try {
                     InputStream stream = new FileInputStream(new File(profilePath));
@@ -139,8 +139,8 @@ public class MemberInitActivity extends BasicActivity {
                             if (task.isSuccessful()) {
                                 Uri downloadUri = task.getResult();
 
-                                MemberInfo memberInfo = new MemberInfo(name, phoneNumber, birthDay, address, downloadUri.toString());
-                                storeUploader(memberInfo);
+                                UserInfo userInfo = new UserInfo(name, phoneNumber, birthDay, address, downloadUri.toString());
+                                storeUploader(userInfo);
                             } else {
                                 showToast(MemberInitActivity.this, "회원정보를 보내는데 실패하였습니다.");
                             }
@@ -155,9 +155,9 @@ public class MemberInitActivity extends BasicActivity {
         }
     }
 
-    private void storeUploader(MemberInfo memberInfo) {
+    private void storeUploader(UserInfo userInfo) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("users").document(user.getUid()).set(memberInfo)
+        db.collection("users").document(user.getUid()).set(userInfo)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
